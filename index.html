@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پروکسی پیشرفته - دسترسی به همه سایت‌ها</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Tahoma', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 20px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .search-box input {
+            flex: 4;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+            font-family: inherit;
+        }
+        .search-box select {
+            flex: 1;
+            padding: 15px;
+            font-size: 14px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+            background: white;
+            cursor: pointer;
+        }
+        .search-box button {
+            flex: 1;
+            padding: 15px 25px;
+            font-size: 16px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .search-box button:hover {
+            background: #1e3c72;
+        }
+        .quick-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .quick-links a {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .quick-links a:hover {
+            background: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+        }
+        .result-frame {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            min-height: 550px;
+        }
+        .result-frame iframe {
+            width: 100%;
+            height: 70vh;
+            border: none;
+        }
+        .status-bar {
+            background: rgba(0,0,0,0.7);
+            color: #0f0;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .info {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            font-size: 11px;
+            opacity: 0.6;
+        }
+        @media (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 پروکسی حرفه‌ای و رایگان</h1>
+            <p>دسترسی نامحدود به همه سایت‌ها</p>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="urlInput" placeholder="آدرس سایت رو وارد کن... youtube.com یا https://t.me">
+            <select id="proxySelect">
+                <option value="cors">سرور پروکسی 1 (سریع)</option>
+                <option value="allorigins">سرور پروکسی 2 (پایدار)</option>
+                <option value="something">سرور پروکسی 3 (آزمایشی)</option>
+            </select>
+            <button onclick="goToSite()">🚀 برو</button>
+        </div>
+        
+        <div class="quick-links">
+            <a onclick="quickGo('youtube.com')">🎬 یوتیوب</a>
+            <a onclick="quickGo('instagram.com')">📸 اینستاگرام</a>
+            <a onclick="quickGo('twitter.com')">🐦 ایکس</a>
+            <a onclick="quickGo('github.com')">💻 گیت‌هاب</a>
+            <a onclick="quickGo('aparat.com')">📹 آپارات</a>
+            <a onclick="quickGo('telegram.org')">✈️ تلگرام</a>
+            <a onclick="quickGo('reddit.com')">🤡 ردیت</a>
+            <a onclick="quickGo('pinterest.com')">📌 پینترست</a>
+        </div>
+        
+        <div class="result-frame" id="resultFrame">
+            <iframe id="proxyFrame" srcdoc="<html style='background:#f0f2f5; display:flex; align-items:center; justify-content:center; height:100%;'><body style='font-family:Arial; text-align:center; color:#555;'><h2>✨ آماده جستجو</h2><p>یک آدرس وارد کن یا روی دکمه‌های سریع کلیک کن</p><p style='font-size:12px; margin-top:20px;'>🔒 امن و رایگان • بدون نیاز به نصب</p></body></html>"></iframe>
+        </div>
+        
+        <div class="status-bar" id="statusBar">
+            ✅ آماده | برای شروع یک آدرس وارد کن
+        </div>
+        
+        <div class="info">
+            🔒 حریم خصوصی محترم است • کاملاً رایگان • بدون تبلیغ
+        </div>
+    </div>
+
+    <script>
+        // لیست سرورهای پروکسی مختلف
+        const proxies = {
+            cors: 'https://cors-anywhere.herokuapp.com/',
+            allorigins: 'https://api.allorigins.win/get?url=',
+            something: 'https://corsproxy.io/?'
+        };
+        
+        let currentProxy = proxies.cors;
+        
+        // تغییر پروکسی از منو
+        document.getElementById('proxySelect').addEventListener('change', function() {
+            currentProxy = proxies[this.value];
+            updateStatus(`🔄 تغییر سرور به ${this.value}`, '#ff9800');
+        });
+        
+        function updateStatus(msg, color = '#0f0') {
+            let bar = document.getElementById('statusBar');
+            bar.innerHTML = msg;
+            bar.style.color = color;
+            setTimeout(() => {
+                if (bar.innerHTML === msg) {
+                    bar.style.color = '#0f0';
+                }
+            }, 2000);
+        }
+        
+        function goToSite() {
+            let url = document.getElementById('urlInput').value.trim();
+            if (!url) {
+                updateStatus('⚠️ لطفاً یک آدرس وارد کن!', '#ff9800');
+                return;
+            }
+            
+            // حذف http:// یا https:// اضافی
+            url = url.replace(/^https?:\/\//, '');
+            
+            // اضافه کردن https://
+            let fullUrl = 'https://' + url;
+            
+            updateStatus('🔄 در حال اتصال به ' + url + ' ...', '#ff9800');
+            
+            let iframe = document.getElementById('proxyFrame');
+            let selectedProxy = document.getElementById('proxySelect').value;
+            
+            if (selectedProxy === 'allorigins') {
+                // روش مخصوص allorigins
+                fetch(proxies.allorigins + encodeURIComponent(fullUrl))
+                    .then(res => res.json())
+                    .then(data => {
+                        iframe.srcdoc = data.contents;
+                        updateStatus('✅ متصل شد!', '#0f0');
+                    })
+                    .catch(err => {
+                        updateStatus('❌ خطا! سرور رو عوض کن و دوباره تلاش کن', '#f00');
+                        iframe.srcdoc = `<html><body style='text-align:center;padding:50px;'><h3>❌ خطا در اتصال</h3><p>لطفاً از منوی بالا سرور پروکسی رو عوض کن و دوباره امتحان کن.</p></body></html>`;
+                    });
+            } 
+            else if (selectedProxy === 'something') {
+                iframe.src = proxies.something + fullUrl;
+                updateStatus('✅ در حال بارگذاری...', '#0f0');
+            }
+            else {
+                // روش معمولی cors
+                iframe.src = proxies.cors + fullUrl;
+                updateStatus('✅ در حال بارگذاری...', '#0f0');
+            }
+        }
+        
+        function quickGo(site) {
+            document.getElementById('urlInput').value = site;
+            goToSite();
+        }
+        
+        // با زدن Enter
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                goToSite();
+            }
+        });
+    </script>
+</body>
+</html>
