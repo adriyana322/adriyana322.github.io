@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پروکسی پیشرفته - دسترسی به همه سایت‌ها</title>
+    <title>پروکسی قدرتمند - دسترسی به همه سایت‌ها</title>
     <style>
         * {
             margin: 0;
@@ -133,16 +133,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌐 پروکسی حرفه‌ای و رایگان</h1>
+            <h1>🌐 پروکسی قدرتمند و رایگان</h1>
             <p>دسترسی نامحدود به همه سایت‌ها</p>
         </div>
         
         <div class="search-box">
             <input type="text" id="urlInput" placeholder="آدرس سایت رو وارد کن... youtube.com یا https://t.me">
             <select id="proxySelect">
-                <option value="cors">سرور پروکسی 1 (سریع)</option>
-                <option value="allorigins">سرور پروکسی 2 (پایدار)</option>
-                <option value="something">سرور پروکسی 3 (آزمایشی)</option>
+                <option value="proxy1">سرور پروکسی 1 (سریع)</option>
+                <option value="proxy2">سرور پروکسی 2 (پایدار)</option>
+                <option value="proxy3">سرور پروکسی 3 (آزمایشی)</option>
+                <option value="proxy4">سرور پروکسی 4 (جدید)</option>
+                <option value="proxy5">سرور پروکسی 5 (پشتیبان)</option>
             </select>
             <button onclick="goToSite()">🚀 برو</button>
         </div>
@@ -156,6 +158,7 @@
             <a onclick="quickGo('telegram.org')">✈️ تلگرام</a>
             <a onclick="quickGo('reddit.com')">🤡 ردیت</a>
             <a onclick="quickGo('pinterest.com')">📌 پینترست</a>
+            <a onclick="quickGo('google.com')">🔍 گوگل</a>
         </div>
         
         <div class="result-frame" id="resultFrame">
@@ -172,19 +175,29 @@
     </div>
 
     <script>
-        // لیست سرورهای پروکسی مختلف
+        // لیست 5 سرور پروکسی مختلف
         const proxies = {
-            cors: 'https://cors-anywhere.herokuapp.com/',
-            allorigins: 'https://api.allorigins.win/get?url=',
-            something: 'https://corsproxy.io/?'
+            proxy1: 'https://cors-anywhere.herokuapp.com/',
+            proxy2: 'https://api.allorigins.win/get?url=',
+            proxy3: 'https://corsproxy.io/?',
+            proxy4: 'https://proxy.cors.sh/',
+            proxy5: 'https://thingproxy.freeboard.io/fetch/'
         };
         
-        let currentProxy = proxies.cors;
+        let currentProxy = proxies.proxy1;
         
         // تغییر پروکسی از منو
         document.getElementById('proxySelect').addEventListener('change', function() {
-            currentProxy = proxies[this.value];
-            updateStatus(`🔄 تغییر سرور به ${this.value}`, '#ff9800');
+            let selected = this.value;
+            currentProxy = proxies[selected];
+            let names = {
+                proxy1: 'سرور 1 (سریع)',
+                proxy2: 'سرور 2 (پایدار)',
+                proxy3: 'سرور 3 (آزمایشی)',
+                proxy4: 'سرور 4 (جدید)',
+                proxy5: 'سرور 5 (پشتیبان)'
+            };
+            updateStatus(`🔄 تغییر به ${names[selected]}`, '#ff9800');
         });
         
         function updateStatus(msg, color = '#0f0') {
@@ -194,8 +207,9 @@
             setTimeout(() => {
                 if (bar.innerHTML === msg) {
                     bar.style.color = '#0f0';
+                    bar.innerHTML = '✅ آماده | برای شروع یک آدرس وارد کن';
                 }
-            }, 2000);
+            }, 3000);
         }
         
         function goToSite() {
@@ -216,26 +230,38 @@
             let iframe = document.getElementById('proxyFrame');
             let selectedProxy = document.getElementById('proxySelect').value;
             
-            if (selectedProxy === 'allorigins') {
+            if (selectedProxy === 'proxy2') {
                 // روش مخصوص allorigins
-                fetch(proxies.allorigins + encodeURIComponent(fullUrl))
+                fetch(proxies.proxy2 + encodeURIComponent(fullUrl))
                     .then(res => res.json())
                     .then(data => {
-                        iframe.srcdoc = data.contents;
-                        updateStatus('✅ متصل شد!', '#0f0');
+                        if (data && data.contents) {
+                            iframe.srcdoc = data.contents;
+                            updateStatus('✅ متصل شد!', '#0f0');
+                        } else {
+                            throw new Error('محتوایی یافت نشد');
+                        }
                     })
                     .catch(err => {
                         updateStatus('❌ خطا! سرور رو عوض کن و دوباره تلاش کن', '#f00');
-                        iframe.srcdoc = `<html><body style='text-align:center;padding:50px;'><h3>❌ خطا در اتصال</h3><p>لطفاً از منوی بالا سرور پروکسی رو عوض کن و دوباره امتحان کن.</p></body></html>`;
+                        iframe.srcdoc = `<html><body style='text-align:center;padding:50px;font-family:Arial;'><h3>❌ خطا در اتصال</h3><p>سرور پروکسی رو عوض کن و دوباره امتحان کن.</p><p style='font-size:12px;color:#888;'>از منوی بالا سرور دیگه‌ای رو انتخاب کن.</p></body></html>`;
                     });
             } 
-            else if (selectedProxy === 'something') {
-                iframe.src = proxies.something + fullUrl;
-                updateStatus('✅ در حال بارگذاری...', '#0f0');
+            else if (selectedProxy === 'proxy4') {
+                // روش مخصوص proxy.cors.sh
+                fetch(proxies.proxy4 + fullUrl)
+                    .then(res => res.text())
+                    .then(data => {
+                        iframe.srcdoc = data;
+                        updateStatus('✅ متصل شد!', '#0f0');
+                    })
+                    .catch(err => {
+                        updateStatus('❌ خطا! سرور رو عوض کن', '#f00');
+                    });
             }
             else {
-                // روش معمولی cors
-                iframe.src = proxies.cors + fullUrl;
+                // روش معمولی برای بقیه
+                iframe.src = currentProxy + fullUrl;
                 updateStatus('✅ در حال بارگذاری...', '#0f0');
             }
         }
